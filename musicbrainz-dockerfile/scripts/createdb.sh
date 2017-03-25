@@ -10,7 +10,6 @@ fi
 if [[ $FETCH_DUMPS == "-fetch" ]]; then
   echo "fetching data dumps"
 
-  apt-get install -y wget
   rm -rf /media/dbdump/*
   wget -nd -nH -P /media/dbdump $FTP_HOST/pub/musicbrainz/data/fullexport/LATEST
   LATEST=$(cat /media/dbdump/LATEST)
@@ -18,10 +17,10 @@ if [[ $FETCH_DUMPS == "-fetch" ]]; then
   pushd /media/dbdump && md5sum -c MD5SUMS && popd
   /musicbrainz-server/admin/InitDb.pl --createdb --import /media/dbdump/mbdump*.tar.bz2 --echo
 elif [[ -a /media/dbdump/mbdump.tar.bz2 ]]; then
-  echo "found existing dumps"
+  echo "found existing dumps in /media/dbdump/"
 
   /musicbrainz-server/admin/InitDb.pl --createdb --import /media/dbdump/mbdump*.tar.bz2 --echo
 else
-  echo "no dumps found or dumps are incomplete"
+  echo "no dumps found in /media/dbdump/ or dumps are incomplete"
   /musicbrainz-server/admin/InitDb.pl --createdb --echo
 fi

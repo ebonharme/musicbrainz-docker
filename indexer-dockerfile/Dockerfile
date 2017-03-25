@@ -1,10 +1,9 @@
-FROM airdock/oracle-jdk:jdk-8u74
-
-MAINTAINER Robert Kaye <rob@metabrainz.org>
+FROM openjdk:jdk-alpine
 
 WORKDIR /home/search
-RUN curl -o /home/search/index.jar http://ftp.musicbrainz.org/pub/musicbrainz/search/index/index.jar
 
-COPY index.sh /home/search
+RUN wget -O index.jar http://ftp.musicbrainz.org/pub/musicbrainz/search/index/index.jar
 
 VOLUME ["/home/search/data"]
+
+CMD java -jar /home/search/index.jar --db-host ${DB_PORT_5432_TCP_ADDR} --db-name musicbrainz_db --db-user musicbrainz --db-password musicbrainz

@@ -114,7 +114,7 @@ sub REPLICATION_TYPE { RT_SLAVE }
 # the replication packets. Enter the access token below:
 # NOTE: DO NOT EXPOSE THIS ACCESS TOKEN PUBLICLY!
 #
-sub REPLICATION_ACCESS_TOKEN { "" }
+sub REPLICATION_ACCESS_TOKEN { "$ENV{REPLICATION_ACCESS_TOKEN}" }
 ################################################################################
 # GPG Signature
 ################################################################################
@@ -333,7 +333,7 @@ sub DATASTORE_REDIS_ARGS {
         database => 0,
         test_database => 1,
         redis_new_args => {
-            server => '127.0.0.1:6379',
+            server => 'redis:6379',
             reconnect => 60,
             encoding => undef,
             cnx_timeout => 0,
@@ -439,7 +439,7 @@ sub CATALYST_DEBUG { 0 }
 # If you are developing on MusicBrainz, you should set this to a true value
 # This will turn off some optimizations (such as CSS/JS compression) to make
 # developing and debuging easier
-sub DEVELOPMENT_SERVER { 1 }
+sub DEVELOPMENT_SERVER { 0 }
 
 # How long to wait before rechecking template files (undef uses the
 # Template::Toolkit default)

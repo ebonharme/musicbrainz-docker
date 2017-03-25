@@ -1,0 +1,11 @@
+exports.DEVELOPMENT_SERVER = true;
+exports.DATASTORE_REDIS_ARGS = {"database":0,"namespace":"MB:","server":"redis:6379","test_database":1};
+exports.RENDERER_PORT = 9009;
+exports.GIT_BRANCH = "";
+exports.GIT_SHA = "";
+exports.MAPBOX_ACCESS_TOKEN = "";
+exports.MAPBOX_MAP_ID = "mapbox.streets";
+exports.SENTRY_DSN = null;
+exports.SENTRY_DSN_PUBLIC = null;
+exports.STATIC_RESOURCES_LOCATION = "//localhost:5000/static/build";
+exports.MB_LANGUAGES = "";
