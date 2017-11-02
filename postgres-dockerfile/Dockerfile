@@ -1,4 +1,4 @@
-FROM postgres:9.5
+FROM postgres:9.6
 MAINTAINER jeffsturgis@gmail.com
 
 ARG DEBIAN_FRONTEND="noninteractive"
@@ -13,27 +13,13 @@ RUN apt-get update && \
     libexpat1-dev \
     libdb-dev \
     libicu-dev \
-    postgresql-server-dev-9.5 \
+    postgresql-server-dev-9.6 \
  && git clone https://github.com/metabrainz/postgresql-musicbrainz-unaccent.git /tmp/postgresql-musicbrainz-unaccent  \
  && git clone https://github.com/metabrainz/postgresql-musicbrainz-collate.git /tmp/postgresql-musicbrainz-collate \
  && cd /tmp/postgresql-musicbrainz-unaccent && make && make install \
  && cd /tmp/postgresql-musicbrainz-collate  && make && make install \
- && rm -R /tmp/* \
+ && cd /tmp && rm -R * \
  && apt-get remove -y git-core build-essential \
- && apt-get autoremove -y \
- && ldd /usr/lib/postgresql/9.5/lib/musicbrainz_unaccent.so \
- && ldd /usr/lib/postgresql/9.5/lib/musicbrainz_collate.so \
- && echo "listen_addresses='*'" >> /var/lib/postgresql/data/postgresql.conf
-
-RUN git clone https://github.com/metabrainz/postgresql-musicbrainz-unaccent.git /tmp/postgresql-musicbrainz-unaccent && \
-  git clone https://github.com/metabrainz/postgresql-musicbrainz-collate.git /tmp/postgresql-musicbrainz-collate
-
-WORKDIR /tmp/postgresql-musicbrainz-unaccent
-RUN make && make install
-WORKDIR /tmp/postgresql-musicbrainz-collate
-RUN make && make install
-WORKDIR /
+ && apt-get autoremove -y
 
 COPY set-config.sh /docker-entrypoint-initdb.d
-
-RUN rm -R /tmp/*
