@@ -25,4 +25,15 @@ RUN apt-get update && \
  && ldd /usr/lib/postgresql/9.5/lib/musicbrainz_collate.so \
  && echo "listen_addresses='*'" >> /var/lib/postgresql/data/postgresql.conf
 
- VOLUME  ["/media/dbdump"]
+RUN git clone https://github.com/metabrainz/postgresql-musicbrainz-unaccent.git /tmp/postgresql-musicbrainz-unaccent && \
+  git clone https://github.com/metabrainz/postgresql-musicbrainz-collate.git /tmp/postgresql-musicbrainz-collate
+
+WORKDIR /tmp/postgresql-musicbrainz-unaccent
+RUN make && make install
+WORKDIR /tmp/postgresql-musicbrainz-collate
+RUN make && make install
+WORKDIR /
+
+COPY set-config.sh /docker-entrypoint-initdb.d
+
+RUN rm -R /tmp/*

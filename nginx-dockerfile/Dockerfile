@@ -1,6 +1,7 @@
 FROM nginx:stable-alpine
 
-ENV SOURCE_REF v-2017-03-13
+#ENV SOURCE_REF v-2017-03-13
+ENV SOURCE_REF v-2017-10-31
 
 COPY 001-musicbrainz /etc/nginx/conf.d/001-musicbrainz
 
@@ -26,3 +27,4 @@ RUN ./node_modules/.bin/gulp
 # ./script/dbdefs_to_js.pl --client
 #keep:
 #/musicbrainz-server/root
+# npm install https://github.com/metabrainz/musicbrainz-server.gitls -la

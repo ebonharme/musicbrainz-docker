@@ -2,7 +2,7 @@ FROM openjdk:jdk-alpine
 
 WORKDIR /home/search
 
-RUN wget -O index.jar http://ftp.musicbrainz.org/pub/musicbrainz/search/index/index.jar
+RUN curl -o /home/search/index.jar ftp://ftp.eu.metabrainz.org/pub/musicbrainz/search/index/index.jar
 
 VOLUME ["/home/search/data"]
 

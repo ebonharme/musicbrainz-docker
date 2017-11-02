@@ -4,11 +4,11 @@ musicbrainz slave server with search and replication
 [![Build Status](https://travis-ci.org/jsturgis/musicbrainz-docker.svg?branch=master)](https://travis-ci.org/jsturgis/musicbrainz-docker)
 
 This repo contains everything needed to run a musicbrainz slave server with search and replication in docker.
-You will need a little over 20 gigs of free space to run this with replication.
+You will need a little over 50 gigs of free space to run this with replication.
 
 ### Versions
-* Current MB Branch: [v-2016-05-23-schema-change-v2](musicbrainz-dockerfile/Dockerfile#L22)
-* Current DB_SCHEMA_SEQUENCE: [23](musicbrainz-dockerfile/DBDefs.pm#L95)
+* Current MB Branch: [v-2017-05-15-schema-change](musicbrainz-dockerfile/Dockerfile#L25)
+* Current DB_SCHEMA_SEQUENCE: [24](musicbrainz-dockerfile/DBDefs.pm#L107)
 * Postgres Version: [9.5](postgres-dockerfile/Dockerfile#L1)
 
 ### Configuration
@@ -39,6 +39,12 @@ In order to use the search functions of the web site/API you will need to build 
 
 * `sudo docker-compose run --rm indexer /home/search/index.sh`
 
+### Replication
+Replication is run as a cronjob, you can update the [crons.conf](musicbrainz-dockerfile/scripts/crons.conf) file to change when replication will be run.
+
+To view the replication log file you can run this command
+* `sudo docker-compose exec musicbrainz /usr/bin/tail -f slave.log`
+
 ### If you need to recreate the database
 you will need to enter the postgres password that you set in [postgres.env](postgres-dockerfile/postgres.env).
 * `sudo docker-compose run --rm musicbrainz /recreatedb.sh`
@@ -48,7 +54,7 @@ When there is a schema change you will need to follow the directions posted by t
 
 ###### The usual process to update the schema is:
 
-* Ensure you’ve replicated up to the most recent replication packet available with the old schema. (if you’re not sure, run `sudo docker exec musicbrainzdocker_musicbrainz_1 ./admin/replication/LoadReplicationChanges`).
+* Ensure you’ve replicated up to the most recent replication packet available with the old schema. (if you’re not sure, run `sudo docker exec musicbrainzdocker_musicbrainz_1 /replication.sh`).
 * Switch to the new code with:
 * Run bash in the container: `sudo docker exec -ti musicbrainzdocker_musicbrainz_1 bash`.
 * Checkout the new branch: `git fetch origin && git checkout NEW_SCHEMA_BRANCH`.

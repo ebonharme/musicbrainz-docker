@@ -2,9 +2,9 @@ server {
     listen 0.0.0.0:5000;
     # include site-name.conf;
 
-    access_log  /var/log/nginx/001-musicbrainz.access.log;
-    access_log  /var/log/nginx/001-musicbrainz.proxy.log proxylog;
-    error_log   /var/log/nginx/001-musicbrainz.error.log notice;
+    access_log  /dev/stdout;
+    access_log  /dev/stdout proxylog;
+    error_log   /dev/stderr notice;
 
     location /static/ {
         root /musicbrainz-server/root;

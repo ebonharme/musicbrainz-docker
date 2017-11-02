@@ -1,6 +1,7 @@
 FROM ubuntu:xenial
 
-ENV SOURCE_REF v-2017-03-13
+#ENV SOURCE_REF v-2017-03-13
+ENV SOURCE_REF v-2017-10-31
 RUN (echo "deb http://archive.ubuntu.com/ubuntu xenial main restricted universe multiverse" > /etc/apt/sources.list && echo "deb http://archive.ubuntu.com/ubuntu/ xenial-updates main restricted universe multiverse" >> /etc/apt/sources.list && echo "deb http://archive.ubuntu.com/ubuntu/ xenial-backports main restricted universe multiverse" >> /etc/apt/sources.list && echo "deb http://archive.ubuntu.com/ubuntu/ xenial-security main restricted universe multiverse" >> /etc/apt/sources.list)
 RUN apt-get update
 
@@ -37,13 +38,13 @@ RUN cpanm --notest Plack::Middleware::Debug::Base \
     Server::Starter \
     TURNSTEP/DBD-Pg-3.4.2.tar.gz
 
-ADD DBDefs.pm /musicbrainz-server/lib/
-ADD scripts/start.sh /start.sh
-ADD scripts/crons.conf /crons.conf
-ADD scripts/replication.sh /replication.sh
-ADD scripts/createdb.sh /createdb.sh
-ADD scripts/recreatedb.sh /recreatedb.sh
-ADD scripts/set-token.sh /set-token.sh
+COPY DBDefs.pm /musicbrainz-server/lib/
+COPY scripts/start.sh /start.sh
+COPY scripts/crons.conf /crons.conf
+COPY scripts/replication.sh /replication.sh
+COPY scripts/createdb.sh /createdb.sh
+COPY scripts/recreatedb.sh /recreatedb.sh
+COPY scripts/set-token.sh /set-token.sh
 
 RUN crontab /crons.conf
 

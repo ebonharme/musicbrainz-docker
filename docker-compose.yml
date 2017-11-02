@@ -1,44 +1,57 @@
-postgresqldata:
-  build: data-dockerfile
-  restart: always
-  volumes:
-   - /datadump:/media/dbdump:rw
+version: '2'
 
-postgresql:
-  build: postgres-dockerfile
-  restart: always
-  env_file:
-   - ./postgres-dockerfile/postgres.env
-  volumes:
-   - /mnt/pgdata/pgdata:/var/lib/postgresql/data
-  expose:
-   - "5432"
+volumes:
+  pgdata:
+    driver: local
+  indexdata:
+    driver: local
+  dbdump:
+    driver: local
 
-musicbrainz:
-  build: musicbrainz-dockerfile
-  ports:
-   - "5000:5000"
-  volumes_from:
-   - postgresqldata
-  restart: always
-  environment: 
-   - MUSICBRAINZ_USE_PROXY=1
-  expose: 
-   - "5000"
-  links:
-   - postgresql:db
-   - search:search
+services:
+  db:
+    build: postgres-dockerfile
+    restart: unless-stopped
+    env_file:
+      - ./postgres-dockerfile/postgres.env
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    expose:
+      - "5432"
 
-indexer:
-  build: indexer-dockerfile
-  links:
-   - postgresql:db
-  volumes:
-   - /mnt/data:/home/search/data
+  musicbrainz:
+    build: musicbrainz-dockerfile
+    ports:
+      - "5000:5000"
+    volumes:
+      - dbdump:/media/dbdump
+    restart: unless-stopped
+    env_file:
+      - ./postgres-dockerfile/postgres.env
+    environment:
+      - MUSICBRAINZ_USE_PROXY=1
+    depends_on:
+      - db
+      - search
+      - redis
 
-search:
-  build: search-dockerfile
-  expose:
-   - "8080"
-  volumes:
-   - /mnt/data:/home/search/data
+  indexer:
+    build: indexer-dockerfile
+    depends_on:
+      - db
+    volumes:
+      - indexdata:/home/search/indexdata
+
+  search:
+    build: search-dockerfile
+    restart: unless-stopped
+    expose:
+      - "8080"
+    volumes:
+      - indexdata:/home/search/indexdata
+
+  redis:
+    image: redis:3.2.1
+    restart: unless-stopped
+    expose:
+      - "6379"

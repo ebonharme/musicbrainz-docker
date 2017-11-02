@@ -1,3 +1,3 @@
 #!/bin/bash
 
-psql -U $DB_ENV_POSTGRES_USER -h $DB_PORT_5432_TCP_ADDR -c "DROP DATABASE musicbrainz_db;" && /createdb.sh -fetch
+psql -U musicbrainz -h db -c "DROP DATABASE musicbrainz;" postgres && /createdb.sh -fetch
