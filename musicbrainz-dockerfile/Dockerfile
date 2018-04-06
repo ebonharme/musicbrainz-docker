@@ -1,4 +1,5 @@
-FROM ubuntu:xenial
+FROM metabrainz/base-image
+LABEL maintainer=jeffsturgis@gmail.com
 
 #ENV SOURCE_REF v-2017-03-13
 ENV SOURCE_REF v-2017-10-31
@@ -14,17 +15,17 @@ RUN apt-get install -y \
     libdb-dev \
     libicu-dev \
     liblocal-lib-perl \
-    cpanminus \
-    cron \
-    nginx
+    cpanminus
 
 RUN git clone --recursive https://github.com/metabrainz/musicbrainz-server.git musicbrainz-server && \
     cd musicbrainz-server && \
-    git checkout ${SOURCE_REF}
+    git checkout v-2017-10-31
 
-RUN cat /musicbrainz-server/Makefile.PL | grep ^requires > cpanfile
-RUN cpanm --installdeps --notest .
-RUN cpanm --notest Plack::Middleware::Debug::Base \
+RUN curl -sLO https://deb.nodesource.com/node_7.x/pool/main/n/nodejs/nodejs_7.9.0-1nodesource1~xenial1_amd64.deb && \
+    dpkg -i nodejs_7.9.0-1nodesource1~xenial1_amd64.deb
+
+RUN cd /musicbrainz-server/ && eval $( perl -Mlocal::lib) && cpanm --installdeps --notest .
+RUN eval $( perl -Mlocal::lib) && cpanm --notest Plack::Middleware::Debug::Base \
     Catalyst::Plugin::Cache::HTTP \
     Catalyst::Plugin::StackTrace \
     Cache::Memcached::Fast \
@@ -36,16 +37,21 @@ RUN cpanm --notest Plack::Middleware::Debug::Base \
     Plack::Handler::Starlet \
     Starlet::Server \
     Server::Starter \
-    TURNSTEP/DBD-Pg-3.4.2.tar.gz
+    TURNSTEP/DBD-Pg-3.5.9_1.tar.gz
 
-COPY DBDefs.pm /musicbrainz-server/lib/
-COPY scripts/start.sh /start.sh
-COPY scripts/crons.conf /crons.conf
-COPY scripts/replication.sh /replication.sh
-COPY scripts/createdb.sh /createdb.sh
-COPY scripts/recreatedb.sh /recreatedb.sh
-COPY scripts/set-token.sh /set-token.sh
+ADD DBDefs.pm /musicbrainz-server/lib/
+ADD scripts/start.sh /start.sh
+ADD scripts/start_mb_renderer.pl /start_mb_renderer.pl
+ADD scripts/crons.conf /crons.conf
+ADD scripts/replication.sh /replication.sh
+ADD scripts/createdb.sh /createdb.sh
+ADD scripts/recreatedb.sh /recreatedb.sh
+ADD scripts/set-token.sh /set-token.sh
 
+RUN cd /musicbrainz-server/ && npm install --only=production \
+    && eval $( perl -Mlocal::lib) && /musicbrainz-server/script/compile_resources.sh
+
+RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 RUN crontab /crons.conf
 
 WORKDIR /musicbrainz-server
