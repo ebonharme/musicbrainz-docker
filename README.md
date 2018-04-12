@@ -7,7 +7,7 @@ This repo contains everything needed to run a musicbrainz slave server with sear
 You will need a little over 50 gigs of free space to run this with replication.
 
 ### Versions
-* Current MB Branch: [v-2017-05-15-schema-change](musicbrainz-dockerfile/Dockerfile#L25)
+* Current MB Branch: [v-2018-01-24](musicbrainz-dockerfile/Dockerfile#L23)
 * Current DB_SCHEMA_SEQUENCE: [24](musicbrainz-dockerfile/DBDefs.pm#L107)
 * Postgres Version: [9.5](postgres-dockerfile/Dockerfile#L1)
 
@@ -48,6 +48,8 @@ To view the replication log file you can run this command
 ### If you need to recreate the database
 you will need to enter the postgres password that you set in [postgres.env](postgres-dockerfile/postgres.env).
 * `sudo docker-compose run --rm musicbrainz /recreatedb.sh`
+or to recreate and fetch new data dumps
+* `sudo docker-compose run --rm musicbrainz /recreatedb.sh -fetch`
 
 ### Handling Schema Updates
 When there is a schema change you will need to follow the directions posted by the musicbrainz team to update the schema.

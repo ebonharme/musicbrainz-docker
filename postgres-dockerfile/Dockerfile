@@ -1,5 +1,4 @@
 FROM postgres:9.6
-MAINTAINER jeffsturgis@gmail.com
 
 ARG DEBIAN_FRONTEND="noninteractive"
 

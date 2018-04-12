@@ -1,7 +1,6 @@
 FROM ubuntu:xenial
 
-#ENV SOURCE_REF v-2017-03-13
-ENV SOURCE_REF v-2017-10-31
+ARG SOURCE_REF=v-2018-01-24
 RUN (echo "deb http://archive.ubuntu.com/ubuntu xenial main restricted universe multiverse" > /etc/apt/sources.list && echo "deb http://archive.ubuntu.com/ubuntu/ xenial-updates main restricted universe multiverse" >> /etc/apt/sources.list && echo "deb http://archive.ubuntu.com/ubuntu/ xenial-backports main restricted universe multiverse" >> /etc/apt/sources.list && echo "deb http://archive.ubuntu.com/ubuntu/ xenial-security main restricted universe multiverse" >> /etc/apt/sources.list)
 RUN apt-get update
 
